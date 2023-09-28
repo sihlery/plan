@@ -1,0 +1,6 @@
+
+    #tableDiv {
+        max-width: 1200px; /* Oder jede andere gewünschte Breite */
+        overflow-x: auto; /* Damit ein horizontaler Scrollbalken erscheint, wenn die Tabelle breiter als der Wrapper ist */
+        margin: 0 auto;   /* Zentriert den Wrapper horizontal */
+    }
