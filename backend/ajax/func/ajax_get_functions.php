@@ -1,6 +1,7 @@
 <?php
-require_once '../db/connect.php';
-require_once '../db/queries.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/plan/backend/db/connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/plan/backend/db/queries.php';
+
 
 
 
@@ -41,6 +42,8 @@ function getBereicheDropdown($pdo, $abteilung) {
     }
 }
 
+
+##################  getTableForAbteilungenUndBereiche START ####################
 function getTableForAbteilungenUndBereiche($pdo, $abteilung, $bereich, $KWbeginn, $username) {
     var_dump($username);
     $mitarbeiterErgebnisse = getMitarbeiterEinerAbteilungUndBereich($pdo, $abteilung, $bereich);
@@ -145,6 +148,8 @@ function generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, 
 
 
 
+
+
 function calculateHours($time) {
     if (!$time || !preg_match('/\d{2}:\d{2} \d{2}:\d{2}/', $time)) return 0;
     list($start, $end) = explode(' ', $time);
@@ -167,3 +172,5 @@ function calculateHours($time) {
 
     return $totalMinutes / 60; // Umwandlung zurück in Stunden
 }
+
+##################  getTableForAbteilungenUndBereiche ENDE ####################

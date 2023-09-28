@@ -1,6 +1,6 @@
 <?php
-require_once '../functions/ajax_getfunctions.php';
-require_once '../db/connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/plan/backend/ajax/func/ajax_get_functions.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/plan/backend/db/connect.php';
 
 $action = $_GET['action'] ?? null;
 $username = $_GET['user'] ?? null;
@@ -9,10 +9,6 @@ $bereich = $_GET['selectedBereich'] ?? null;
 $startOfWeek = $_GET['KWbeginn']?? null;
 
 
-
-
-
-// Überprüfen Sie, ob der Benutzer legitim ist (optional)
 
 switch ($action) {
     case 'getAbteilungen':

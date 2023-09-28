@@ -1,44 +1,16 @@
-function handleConfirmButton(username) {
-    const newUsername = $('#usernameInput').val().trim();
-    if (newUsername !== username) {
-        resetDropdowns();
-    }
-    username = newUsername;
-    ladeAbteilungen(username, true);
-
-    return newUsername;
-}
-
-
-function handleAbteilungChange(event, username) {
-    const selectedAbteilungValue = $(event.target).val();
-    if (username) {
-        ladeBereiche(selectedAbteilungValue);
-        loadTable(selectedAbteilungValue, "Alle", username);
-    } else {
-        alert("Bitte Benutzername eingeben und bestätigen.");
-    }
-}
-
-function handleBereichChange(event, username) {
-    const selectedAbteilungValue = $('#abteilungDropdown').val();
-    const selectedBereichValue = $(event.target).val();
-    if (username) {
-        loadTable(selectedAbteilungValue, selectedBereichValue, username);
-    } else {
-        alert("Bitte Benutzername eingeben und bestätigen.");
-    }
-}
+//BASE Url für GET ajax-anfragen
+var GET_URL = '/plan/backend/ajax/get_data.php';
+var SET_URL = '/plan/backend/ajax/set_data.php';
 
 
 function ladeAbteilungen(username, autoSelect = false) {
     $.ajax({
-        url: 'fetch_data.php',
+        url: GET_URL,
         type: 'GET',
         data: {
             action: 'getAbteilungen',
             user: username
-        },
+        },    
         success: function(response) {
             
 
@@ -50,61 +22,38 @@ function ladeAbteilungen(username, autoSelect = false) {
                 $('#abteilungDropdown').val(ersteAbteilung);
                 ladeBereiche(ersteAbteilung);
                 loadTable(ersteAbteilung, "Alle", username);
-            }
-        },
+            }    
+        },    
         error: function(xhr, status, error) {
             console.log("Status: " + status);
             console.log("Error: " + error);
             console.log("XHR: ", xhr);
-        }
-    });
-}
+        }    
+    });    
+}    
 
 function ladeBereiche(abteilung) {
     $.ajax({
-        url: 'fetch_data.php',
+        url: GET_URL,
         type: 'GET',
         data: {
             action: 'getBereiche',
             selectedAbteilung: abteilung
-        },
+        },    
         success: function(response) {
             
             var bereiche = JSON.parse(response);
             
             bereichDropdownHinzufügen(bereiche);
-        },
+        },    
         error: function(xhr, status, error) {
             console.log("Status: " + status);
             console.log("Error: " + error);
             console.log("XHR: ", xhr);
-        }
-    });
-}
+        }    
+    });    
+}    
 
-
-function abteilungDropdownHinzufügen(abteilungen) {
-    $('#abteilungDropdown').empty();
-    for (var i = 0; i < abteilungen.length; i++) {
-        var abteilung = abteilungen[i];
-        $('#abteilungDropdown').append('<option value="' + abteilung + '">' + abteilung + '</option>');
-    }
-}
-
-function bereichDropdownHinzufügen(bereiche) {
-    $('#bereichDropdown').empty();
-    $('#bereichDropdown').append('<option value="Alle">Alle</option>');
-    for (var i = 0; i < bereiche.length; i++) {
-        var bereich = bereiche[i]["Bereich"];
-        $('#bereichDropdown').append('<option value="' + bereich + '">' + bereich + '</option>');
-    }
-}
-
-function resetDropdowns() {
-    $('#abteilungDropdown, #bereichDropdown').empty();
-    $('#abteilungDropdown').append('<option value="" disabled selected>Wählen Sie eine Abteilung</option>');
-    $('#bereichDropdown').append('<option value="" disabled selected>Wählen Sie einen Bereich</option>');
-}
 
 
 
@@ -112,7 +61,7 @@ function resetDropdowns() {
 function loadTable(selectedAbteilungValue, selectedBereichValue, username) {
     if (selectedAbteilungValue && selectedBereichValue) {
         $.ajax({
-            url: 'fetch_data.php',
+            url: GET_URL,
             type: 'GET',
             data: {
                 action: 'getTable',
@@ -120,17 +69,22 @@ function loadTable(selectedAbteilungValue, selectedBereichValue, username) {
                 selectedBereich: selectedBereichValue,
                 KWbeginn: startOfWeek.format('YYYY-MM-DD'),
                 user: username
-
             },
             success: function(response) {
                 $('#tableBody').empty(); // Leert den Body der Tabelle
                 $('#mitarbeiterTabelle').DataTable().destroy(); // Zerstört die DataTable Instanz
                 $('#tableBody').html(response); // Fügt die neuen Zeilen hinzu
 
-                // Initialisiert die DataTables Instanz erneut
-                $('#mitarbeiterTabelle').DataTable({
+                // Initialisiert die DataTables Instanz erneut und speichert sie in der "table" Variable
+                var table = $('#mitarbeiterTabelle').DataTable({
                     pageLength: -1, // Alle Zeilen werden angezeigt
-                    lengthChange: false, // Keine Option zur Änderung der Anzahl der angezeigten Zeil                    
+                    lengthChange: false, // Keine Option zur Änderung der Anzahl der angezeigten Zeil     
+                    "dom": 'lrtip'               
+                });
+
+                // CustomSearchbar Aufgrund von Style            
+                $('#customSearchInput').off('keyup').on('keyup', function() {
+                    table.search(this.value).draw();
                 });
             },
             error: function(xhr, status, error) {
@@ -145,3 +99,41 @@ function loadTable(selectedAbteilungValue, selectedBereichValue, username) {
 
 
 
+function setEintragRequest(benutzerId,datumAttribut){
+    var comment = 'Nase';
+    var time1 = '12:00 14:00';
+    var time2 = '16:00 19:00';
+    var dienstID = 16;
+    var sollk = 999;
+
+    $.ajax({
+        url: SET_URL, // Pfade zur PHP-Datei anpassen
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            action: 'setEinzelnenArbeitstag',
+            userId: benutzerId,
+            datumAttribut: datumAttribut,
+            comment: comment,
+            time1: time1,
+            time2: time2,
+            dienstID: dienstID,
+            sollk: sollk
+        },
+        success: function(response) {
+            if (response.success) {
+                var selectedAbteilungValue = $('#abteilungDropdown').val();
+                var selectedBereichValue = $('#bereichDropdown').val();
+                loadTable(selectedAbteilungValue, selectedBereichValue, username);
+                console.log('Daten erfolgreich aktualisiert');
+            } else {
+                console.error('Fehler beim Aktualisieren der Daten:', response.error);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Fehler bei der AJAX-Anfrage:', error);
+            console.log(response);
+        }
+    });
+
+}

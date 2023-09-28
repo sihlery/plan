@@ -86,6 +86,45 @@ function checkUserBerechtigung($pdo, $username) {
 
 
 
+function checkDienstplanEntry($pdo, $userId, $datumAttribut) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM dienstplan WHERE userid = :userId AND Datum = :datumAttribut");
+    $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+    $stmt->bindParam(':datumAttribut', $datumAttribut, PDO::PARAM_STR);
+    $stmt->execute();
+    
+    return $stmt->fetchColumn();
+}
+
+function updateDienstplan($pdo, $params) {
+    $sql = "UPDATE dienstplan
+            SET Kommentar = :comment,
+                VonBis1 = :time1,
+                VonBis2 = :time2,
+                `Dienstart-ID` = :dienstID,
+                Sollk = :sollk
+            WHERE userid = :userId AND Datum = :datumAttribut";
+
+    $stmt = $pdo->prepare($sql);
+    if ($stmt->execute($params)) {
+        return ["success" => true];
+    } else {
+        return ["success" => false, "error" => "Failed to update dienstplan."];
+    }
+}
+
+function insertDienstplan($pdo, $params) {
+    $sql = "INSERT INTO dienstplan (userid, Datum, Kommentar, VonBis1, VonBis2, `Dienstart-ID`, Sollk)
+            VALUES (:userId, :datumAttribut, :comment, :time1, :time2, :dienstID, :sollk)";
+
+    $stmt = $pdo->prepare($sql);
+    if ($stmt->execute($params)) {
+        return ["success" => true];
+    } else {
+        return ["success" => false, "error" => "Failed to insert into dienstplan."];
+    }
+}
+
+
 
 
 
