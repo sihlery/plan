@@ -66,16 +66,66 @@
     </table> <!-- Ihre Tabelle ... -->
 </div>
 
+
+<div id="contextMenu" style="display: none; position: absolute; border: 1px solid black; background: white; padding: 10px;">
+        <label for="dienstDropdown">Dienstart:</label>
+        <select id="dienstDropdown"> <!-- Dropdown für Dienstarten -->
+            <option value="1">Normal</option>
+            <option value="2">Spaetsch</option>
+            <option value="3">FZA</option>
+            <option value="4">Urlaub</option>
+            <option value="5">AZV</option>
+            <option value="6">Kurs</option>
+            <option value="7">Krank</option>
+            <option value="8">get.Dienst</option>
+            <option value="9">Rufber.</option>
+            <option value="10">Feiert.</option>
+            <option value="11">Extern</option>
+            <option value="12">Frei</option>
+            <option value="13">Mittelsch.</option>
+            <option value="14">AFT</option>
+            <option value="15">Frühsch.</option>
+            <option value="16">LZK</option>
+        </select>
+        <br>
+        <label for="commentInput">Kommentar:</label>
+        <input type="text" id="commentInput">
+        <br>
+        <label for="timeInputVon">Uhrzeit:</label>
+        <input type="text" id="timeInputVon" pattern="[0-9]{2}:[0-9]{2}" maxlength="5" placeholder="HH:MM">
+        <br>
+        <label for="timeInputBis">Uhrzeit:</label>
+        <input type="text" id="timeInputBis" pattern="[0-9]{2}:[0-9]{2}" maxlength="5" placeholder="HH:MM">
+
+        <br>
+        <button id="submitButton">Übernehmen</button>
+        <button id="cancelButton">Abbrechen</button>
+        <!-- <button id="submitButton" onclick="submitForm(benutzerIdForms,datumAttributForms)">Übernehmen</button>
+        <button id="cancelButton" onclick="closeContextMenu()">Abbrechen</button> -->
+    </div>
+
     <script>
         // Globale Variablen
         let aktuelleWocheOffset = 0;
         let username = '';
+        var benutzerIdForms;
+        var datumAttributForms; 
+
         
         document.addEventListener("DOMContentLoaded", function () {
             
             // Initialisierungen 
             dayjs.extend(dayjs_plugin_isoWeek); // Plugin für ISO Woche
-
+            
+            
+            
+            document.addEventListener('contextmenu', handleContextMenu);
+            document.addEventListener('click', function(event) {
+                if (contextMenu.style.display === 'block' && !contextMenu.contains(event.target)) {
+                    closeContextMenu();
+                }
+            });
+            
             // Event-Listener
             document.getElementById('prevWeek').addEventListener('click', function() {
                 adjustWeekOffset(-1);
@@ -97,6 +147,15 @@
                     alert("Bitte Benutzername eingeben.");
                 }
             });
+            document.getElementById('submitButton').addEventListener('click', function() {
+                submitForm(benutzerIdForms,datumAttributForms);
+                closeContextMenu();
+
+            });
+            document.getElementById('cancelButton').addEventListener('click', function() {
+                closeContextMenu();
+            });
+
             $('#abteilungDropdown').on('change', function(event) {
                 handleAbteilungChange(event, username);
             });
@@ -125,20 +184,22 @@
             
             updateDateAndWeek();
             updateTableHeaders();
-
-            $('#mitarbeiterTabelle').on('click', 'td', function() {
-                
-                var benutzerId = $(this).parent().data('userid');
-                var datumAttribut = $(this).data('datumattribut');
             
-                //console.log($(this));
-                console.log('Benutzer-ID:', benutzerId);
-                console.log('Datum-Wert:', datumAttribut);
+            $('#mitarbeiterTabelle').on('contextmenu', 'td.employee-cell', function(event) {
+                // Hier kommt der zusätzliche Code, der bei einem Rechtsklick ausgeführt werden soll
+                benutzerIdForms = $(this).parent().data('userid');
+                datumAttributForms = $(this).data('datumattribut');
                 
-                if (benutzerId !== undefined && datumAttribut !== undefined){
-
-                    setEintragRequest(benutzerId, datumAttribut);
-                }
+                console.log('Benutzer-ID:', benutzerIdForms);
+                console.log('Datum-Wert:', datumAttributForms);
+                
+                
+                // if (benutzerIdForms !== undefined && datumAttributForms !== undefined)
+                // {
+                //     submitForm(benutzerIdForms, datumAttributForms);
+                //     closeContextMenu();
+                
+                // }
             });
         });
     </script>

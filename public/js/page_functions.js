@@ -104,6 +104,39 @@ function resetDropdowns() {
 
 
 
+function showContextMenu(event) {
+    event.preventDefault();
+    var targetElement = event.target;
+
+    // Überprüfe, ob das ausgelöste Event von einer Zelle stammt
+    if (targetElement.tagName === 'TD' && targetElement.classList.contains('employee-cell')) {
+        var contextMenu = document.getElementById('contextMenu');
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = event.clientX + 'px';
+        contextMenu.style.top = event.clientY + 'px';
+    }
+}
+
+function closeContextMenu() {
+    var contextMenu = document.getElementById('contextMenu');
+    contextMenu.style.display = 'none';
+}
+
+
+function handleContextMenu(event) {
+    event.preventDefault();
+
+    var targetElement = event.target;
+
+    // Überprüfe, ob das ausgelöste Event von einer Zelle stammt
+    if (targetElement.tagName === 'TD' && targetElement.classList.contains('employee-cell')) {
+        var contextMenu = document.getElementById('contextMenu');
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = event.clientX + 'px';
+        contextMenu.style.top = event.clientY + 'px';
+    }
+}
+
 
 
 

@@ -75,7 +75,7 @@ function generateTableRow($pdo,$mitarbeiter, $KWbeginn, $berechtigung) {
 
     $userId = htmlspecialchars($mitarbeiter['userid']);
     $employeeName = htmlspecialchars($mitarbeiter['Arbeitnehmer']);
-    return "<tr data-userid='{$userId}'><td class='employee-cell' data-userid='{$userId}'>{$employeeName}</td>" . implode("", $cells) . "<td>{$totalHours}</td></tr>";
+    return "<tr data-userid='{$userId}'><td class='mitarbeiterClass' data-userid='{$userId}'>{$employeeName}</td>" . implode("", $cells) . "<td>{$totalHours}</td></tr>";
 }
 
 function formatArbeitszeit($dienstart, $vonBis1, $vonBis2 = null, $kommentar = '') {

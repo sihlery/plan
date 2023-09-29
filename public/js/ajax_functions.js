@@ -99,41 +99,52 @@ function loadTable(selectedAbteilungValue, selectedBereichValue, username) {
 
 
 
-function setEintragRequest(benutzerId,datumAttribut){
-    var comment = 'Nase';
-    var time1 = '12:00 14:00';
-    var time2 = '16:00 19:00';
-    var dienstID = 16;
-    var sollk = 999;
+function submitForm(benutzerIdForms,datumAttributForms ) { //hier wird bestätigen gedrückt 
+    var dienstID = document.getElementById('dienstDropdown').value;
+    var comment = document.getElementById('commentInput').value;
+    var timeVon = document.getElementById('timeInputVon').value;
+    var timeBis = document.getElementById('timeInputBis').value;
+    var sollk = 70.0 //nur zum testen
 
-    $.ajax({
-        url: SET_URL, // Pfade zur PHP-Datei anpassen
-        type: 'POST',
-        dataType: 'json',
-        data: {
-            action: 'setEinzelnenArbeitstag',
-            userId: benutzerId,
-            datumAttribut: datumAttribut,
-            comment: comment,
-            time1: time1,
-            time2: time2,
-            dienstID: dienstID,
-            sollk: sollk
-        },
-        success: function(response) {
-            if (response.success) {
-                var selectedAbteilungValue = $('#abteilungDropdown').val();
-                var selectedBereichValue = $('#bereichDropdown').val();
-                loadTable(selectedAbteilungValue, selectedBereichValue, username);
-                console.log('Daten erfolgreich aktualisiert');
-            } else {
-                console.error('Fehler beim Aktualisieren der Daten:', response.error);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('Fehler bei der AJAX-Anfrage:', error);
-            console.log(response);
+    var time1 = timeVon + ' ' + timeBis;
+    
+    if (benutzerIdForms !== undefined && datumAttributForms !== undefined) {
+            
+            
+            var time2 = '16:00 19:00';
+            
+            
+            $.ajax({
+                url: SET_URL, // Pfade zur PHP-Datei anpassen
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'setEinzelnenArbeitstag',
+                    userId: benutzerIdForms,
+                    datumAttribut: datumAttributForms,
+                    comment: comment,
+                    time1: time1,
+                    time2: time2,
+                    dienstID: dienstID,
+                    sollk: sollk
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var selectedAbteilungValue = $('#abteilungDropdown').val();
+                        var selectedBereichValue = $('#bereichDropdown').val();
+                        loadTable(selectedAbteilungValue, selectedBereichValue, username);
+                        console.log('Daten erfolgreich aktualisiert');
+                    } else {
+                        console.error('Fehler beim Aktualisieren der Daten:', response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Fehler bei der AJAX-Anfrage:', error);
+                    console.log(response);
+                }
+            });
         }
-    });
-
 }
+     
+
+

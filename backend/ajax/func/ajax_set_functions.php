@@ -6,6 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/plan/backend/db/queries.php';
 function setEinzelnenArbeitstag($pdo,$params) {
     $dienstID = $params[':dienstID'];
     switch ($dienstID) {
+        //Einer Uhrzeit ------
         case 1:  // Normal
         case 2:  // Spätschicht
         case 9:  // Rufbereitschaft
@@ -13,8 +14,12 @@ function setEinzelnenArbeitstag($pdo,$params) {
         case 15: // Frühschi.
             $params[':time2'] = '';
             return handleDatabaseOperation($pdo, $params);
+        //Einer Uhrzeit ------
         case 8:  // geteilter Dienst
+        //Zwei uhrzeiten
             return handleDatabaseOperation($pdo, $params);
+
+        //keine Uhrzeit ------
         case 3:  // FZA
         case 4:  // Urlaub
         case 5:  // AZV
@@ -28,6 +33,7 @@ function setEinzelnenArbeitstag($pdo,$params) {
             $params[':time1'] = '';
             $params[':time2'] = '';
             return handleDatabaseOperation($pdo, $params);
+        //keine Uhrzeit ----
         default:
             http_response_code(400);
             echo json_encode(["error" => "Unbekannte Dienstart: " . $dienstID]);
