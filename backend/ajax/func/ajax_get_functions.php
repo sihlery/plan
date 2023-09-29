@@ -108,7 +108,7 @@ function generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, 
         $formatierteArbeitszeit = formatArbeitszeit($arbeitseintrag['Dienstart'], $arbeitseintrag['VonBis1'], $arbeitseintrag['VonBis2'], $arbeitseintrag['Kommentar']);
         
         if ($berechtigung === 0 && in_array($arbeitseintrag['Dienstart'], ["Krank", "Urlaub", "Frei"]))
-        // {    
+        {    
             // && $mitarbeiter['Login'] !== $username ) {
             $formatierteArbeitszeit = "Abw.";
             $hintergrundfarbe = "B0B0B0"; 
