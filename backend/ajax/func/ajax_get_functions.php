@@ -104,12 +104,13 @@ function generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, 
         
         $hours = calculateHours($arbeitseintrag['VonBis1']);
         $totalHours += $hours;
-
+        var_dump($mitarbeiter['Login']);
         $formatierteArbeitszeit = formatArbeitszeit($arbeitseintrag['Dienstart'], $arbeitseintrag['VonBis1'], $arbeitseintrag['VonBis2'], $arbeitseintrag['Kommentar']);
         
-        if ($berechtigung === 0 && in_array($arbeitseintrag['Dienstart'], ["Krank", "Urlaub", "Frei"]))
+        if ($berechtigung === 0 && in_array($arbeitseintrag['Dienstart'], ["Krank", "Urlaub", "Frei"])
+         && strtolower($mitarbeiter['Login']) !== strtolower($username)
+        ) 
         {    
-            // && $mitarbeiter['Login'] !== $username ) {
             $formatierteArbeitszeit = "Abw.";
             $hintergrundfarbe = "B0B0B0"; 
         } else {
