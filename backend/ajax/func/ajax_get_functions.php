@@ -45,19 +45,19 @@ function getBereicheDropdown($pdo, $abteilung) {
 
 ##################  getTableForAbteilungenUndBereiche START ####################
 function getTableForAbteilungenUndBereiche($pdo, $abteilung, $bereich, $KWbeginn, $username) {
-    var_dump($username);
+    var_dump('Username:_' .$username);
     $mitarbeiterErgebnisse = getMitarbeiterEinerAbteilungUndBereich($pdo, $abteilung, $bereich);
     $berechtigung = checkUserBerechtigung($pdo, $username);
-    var_dump($berechtigung);  // Zum Debugging
+    var_dump('Berechtigungen:_' .$berechtigung);  // Zum Debugging
     $rows = [];
     foreach ($mitarbeiterErgebnisse as $mitarbeiter) {
-        $rows[] = generateTableRow($pdo, $mitarbeiter, $KWbeginn, $berechtigung);
+        $rows[] = generateTableRow($pdo, $mitarbeiter, $KWbeginn, $berechtigung, $username);
     }
     
     return implode("", $rows);
 }
 
-function generateTableRow($pdo,$mitarbeiter, $KWbeginn, $berechtigung) {
+function generateTableRow($pdo,$mitarbeiter, $KWbeginn, $berechtigung, $username) {
     $benutzerId = $mitarbeiter['userid'];
     $arbeitsstundenErgebnisse = getArbeitsstundenEinesMitarbeiters($pdo, $benutzerId, $KWbeginn);
     $stundenNachDatum = array_column($arbeitsstundenErgebnisse, null, 'Datum');
@@ -69,7 +69,7 @@ function generateTableRow($pdo,$mitarbeiter, $KWbeginn, $berechtigung) {
 
     for ($i = 0; $i < 7; $i++) {
         $datum = $currentDate->format('Y-m-d');
-        $cells[] = generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, $totalHours, $berechtigung);
+        $cells[] = generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, $totalHours, $berechtigung, $username);
         $currentDate->modify('+1 day');
     }
 
@@ -98,21 +98,27 @@ function formatArbeitszeit($dienstart, $vonBis1, $vonBis2 = null, $kommentar = '
 }
 
 
-function generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, &$totalHours, $berechtigung) {
+function generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, &$totalHours, $berechtigung, $username) {
     if (isset($stundenNachDatum[$datum])) {
         $arbeitseintrag = $stundenNachDatum[$datum];
         
-        if ($berechtigung === 0 && in_array($arbeitseintrag['Dienstart'], ["Krank", "Urlaub", "Frei"])) {
+        $hours = calculateHours($arbeitseintrag['VonBis1']);
+        $totalHours += $hours;
+
+        $formatierteArbeitszeit = formatArbeitszeit($arbeitseintrag['Dienstart'], $arbeitseintrag['VonBis1'], $arbeitseintrag['VonBis2'], $arbeitseintrag['Kommentar']);
+        
+        if ($berechtigung === 0 && in_array($arbeitseintrag['Dienstart'], ["Krank", "Urlaub", "Frei"]))
+        // {    
+            // && $mitarbeiter['Login'] !== $username ) {
             $formatierteArbeitszeit = "Abw.";
             $hintergrundfarbe = "B0B0B0"; 
         } else {
-            $formatierteArbeitszeit = formatArbeitszeit($arbeitseintrag['Dienstart'], $arbeitseintrag['VonBis1'], $arbeitseintrag['VonBis2'], $arbeitseintrag['Kommentar']);
             $hintergrundfarbe = $arbeitseintrag['Farbe'];
         }
 
         return "<td style='background-color: #$hintergrundfarbe;' class='employee-cell' data-datumattribut='" . htmlspecialchars($datum) . "'>{$formatierteArbeitszeit}</td>";
 
-    } else {
+    }  else {
         $hours = 0;
         $formattedTime = '';
         $bgColor = '';
@@ -158,6 +164,12 @@ function calculateHours($time) {
     
     $startTime = $startHour * 60 + $startMinute; // Umwandlung in Minuten
     $endTime = $endHour * 60 + $endMinute; // Umwandlung in Minuten
+
+    // Überprüfung, ob die Endzeit vor der Startzeit liegt
+    if ($endTime <= $startTime) {
+        $endTime += 24 * 60;  // Addiere 24 Stunden in Minuten
+    }
+    
     $totalMinutes = $endTime - $startTime;  
     
     // Abzug der Pausenzeit
@@ -172,5 +184,6 @@ function calculateHours($time) {
 
     return $totalMinutes / 60; // Umwandlung zurück in Stunden
 }
+
 
 ##################  getTableForAbteilungenUndBereiche ENDE ####################

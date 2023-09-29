@@ -19,7 +19,7 @@ function getBereicheVonAbteilung($pdo, $abteilung) {
 }
 
 function getMitarbeiterEinerAbteilungUndBereich($pdo, $abteilung, $bereich) {
-    $sql = "SELECT userid, Arbeitnehmer, Bereich, Mo_DoVonBis, FrVonBis 
+    $sql = "SELECT userid, Arbeitnehmer, Bereich, Mo_DoVonBis, FrVonBis , Login
             FROM stammdaten 
             WHERE Abteilung = :abteilung AND Login != '*' AND Eintragsart != 'X' AND Eintragsart != 'D'";
     

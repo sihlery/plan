@@ -100,9 +100,7 @@
         <br>
         <button id="submitButton">Übernehmen</button>
         <button id="cancelButton">Abbrechen</button>
-        <!-- <button id="submitButton" onclick="submitForm(benutzerIdForms,datumAttributForms)">Übernehmen</button>
-        <button id="cancelButton" onclick="closeContextMenu()">Abbrechen</button> -->
-    </div>
+ </div>
 
     <script>
         // Globale Variablen
@@ -116,7 +114,6 @@
             
             // Initialisierungen 
             dayjs.extend(dayjs_plugin_isoWeek); // Plugin für ISO Woche
-            
             
             
             document.addEventListener('contextmenu', handleContextMenu);

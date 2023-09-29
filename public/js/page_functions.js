@@ -58,7 +58,7 @@ function updateDateAndWeek() {
     const selectedBereichValue = $('#bereichDropdown').val();
     updateTableHeaders();
     if (username) {
-        loadTable(selectedAbteilungValue, selectedBereichValue);
+        loadTable(selectedAbteilungValue, selectedBereichValue, username);
     }    
 }    
 
