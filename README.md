@@ -50,7 +50,7 @@ Zuerst:
 
 Später:
 - Passwortmanagement 
-    - Vershclüsselung (Hilfe fragen) -> Hashwert?
+    - Verschlüsselung (Hilfe fragen) -> Hashwert?
 - Datenbank neu schreiben(aktualisieren)
     - Tabellen die nicht mehr benutzt werden löschen 
 - Dispo
@@ -59,7 +59,7 @@ Später:
 - evtl. ein kleines Tutorial als Option -> FAQ einbauen? 
 
 
-## Marc Zeugs
+
  
  Ziel der Projekt struktur:
 mein_projekt/
