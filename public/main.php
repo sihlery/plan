@@ -12,6 +12,10 @@
     <!-- DataTables CSS and JS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <!-- Cleave.js - Um Uhrzeit in Format zu schreiben (UI) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/cleave.min.js"></script>
+
+
     <!-- Eigene Funktionen -->
     <script src="./js/page_functions.js"></script>
     <script src="./js/ajax_functions.js"></script>
@@ -111,6 +115,11 @@
 
         
         document.addEventListener("DOMContentLoaded", function () {
+
+            new Cleave('#timeInputVon', {
+                time: true,
+                timePattern: ['h', 'm']
+            });
             
             // Initialisierungen 
             dayjs.extend(dayjs_plugin_isoWeek); // Plugin für ISO Woche
@@ -134,6 +143,7 @@
             document.getElementById('nextWeek').addEventListener('click', function() {
                 adjustWeekOffset(1);
             });
+            
             $('#confirmButton').on('click', function() {
                 const inputUsername = $('#usernameInput').val().trim();
                 if (inputUsername && inputUsername !== '') {
@@ -167,15 +177,16 @@
                 zoomLevel += 0.1;  // Erhöht den Zoom-Level um 10%
                 if (zoomLevel > 2.0) zoomLevel = 2.0;  // Setzt einen maximalen Zoom-Level
 
-                $('body').css('zoom', zoomLevel);  // Wendet den Zoom-Level auf den gesamten Body an
+                $('#mitarbeiterTabelle').css('zoom', zoomLevel);  // Wendet den Zoom-Level nur auf die Tabelle an
             });
 
             $('#zoomOutButton').on('click', function() {
                 zoomLevel -= 0.1;  // Reduziert den Zoom-Level um 10%
                 if (zoomLevel < 0.5) zoomLevel = 0.5;  // Setzt einen Mindest-Zoom-Level
 
-                $('body').css('zoom', zoomLevel);  // Wendet den Zoom-Level auf den gesamten Body an
+                $('#mitarbeiterTabelle').css('zoom', zoomLevel);  // Wendet den Zoom-Level nur auf die Tabelle an
             });
+
 
             // Initialisierungen
             
@@ -190,13 +201,6 @@
                 console.log('Benutzer-ID:', benutzerIdForms);
                 console.log('Datum-Wert:', datumAttributForms);
                 
-                
-                // if (benutzerIdForms !== undefined && datumAttributForms !== undefined)
-                // {
-                //     submitForm(benutzerIdForms, datumAttributForms);
-                //     closeContextMenu();
-                
-                // }
             });
         });
     </script>

@@ -7,6 +7,7 @@ $username = $_GET['user'] ?? null;
 $abteilung = $_GET['selectedAbteilung'] ?? null;
 $bereich = $_GET['selectedBereich'] ?? null;
 $startOfWeek = $_GET['KWbeginn']?? null;
+$KWoffset = $_GET['KWoffset']?? null;
 
 
 
@@ -33,7 +34,8 @@ switch ($action) {
         break;
     case 'getTable':
         header('Content-Type: text/html');
-        $tabelle = getTableForAbteilungenUndBereiche($pdo, $abteilung, $bereich, $startOfWeek, $username);
+        var_dump("KWoffset: " .$KWoffset);
+        $tabelle = getTableForAbteilungenUndBereiche($pdo, $abteilung, $bereich, $startOfWeek, $KWoffset, $username);
         if ($tabelle !== null) {
             echo $tabelle;
         } else {

@@ -44,20 +44,21 @@ function getBereicheDropdown($pdo, $abteilung) {
 
 
 ##################  getTableForAbteilungenUndBereiche START ####################
-function getTableForAbteilungenUndBereiche($pdo, $abteilung, $bereich, $KWbeginn, $username) {
-    var_dump('Username:_' .$username);
+function getTableForAbteilungenUndBereiche($pdo, $abteilung, $bereich, $KWbeginn, $KWoffset, $username) {
+    var_dump('Username:_' .$username); // Zum Debugging
+    var_dump('KWoffset:_' .$KWoffset); // Zum Debugging
     $mitarbeiterErgebnisse = getMitarbeiterEinerAbteilungUndBereich($pdo, $abteilung, $bereich);
     $berechtigung = checkUserBerechtigung($pdo, $username);
     var_dump('Berechtigungen:_' .$berechtigung);  // Zum Debugging
     $rows = [];
     foreach ($mitarbeiterErgebnisse as $mitarbeiter) {
-        $rows[] = generateTableRow($pdo, $mitarbeiter, $KWbeginn, $berechtigung, $username);
+        $rows[] = generateTableRow($pdo, $mitarbeiter, $KWbeginn, $KWoffset, $berechtigung, $username);
     }
     
     return implode("", $rows);
 }
 
-function generateTableRow($pdo,$mitarbeiter, $KWbeginn, $berechtigung, $username) {
+function generateTableRow($pdo,$mitarbeiter, $KWbeginn, $KWoffset, $berechtigung, $username) {
     $benutzerId = $mitarbeiter['userid'];
     $arbeitsstundenErgebnisse = getArbeitsstundenEinesMitarbeiters($pdo, $benutzerId, $KWbeginn);
     $stundenNachDatum = array_column($arbeitsstundenErgebnisse, null, 'Datum');
@@ -69,12 +70,13 @@ function generateTableRow($pdo,$mitarbeiter, $KWbeginn, $berechtigung, $username
 
     for ($i = 0; $i < 7; $i++) {
         $datum = $currentDate->format('Y-m-d');
-        $cells[] = generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, $totalHours, $berechtigung, $username);
+        $cells[] = generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, $totalHours, $berechtigung, $username, $KWoffset);
         $currentDate->modify('+1 day');
     }
 
     $userId = htmlspecialchars($mitarbeiter['userid']);
     $employeeName = htmlspecialchars($mitarbeiter['Arbeitnehmer']);
+
     return "<tr data-userid='{$userId}'><td class='mitarbeiterClass' data-userid='{$userId}'>{$employeeName}</td>" . implode("", $cells) . "<td>{$totalHours}</td></tr>";
 }
 
@@ -98,37 +100,52 @@ function formatArbeitszeit($dienstart, $vonBis1, $vonBis2 = null, $kommentar = '
 }
 
 
-function generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, &$totalHours, $berechtigung, $username) {
-    if (isset($stundenNachDatum[$datum])) {
-        $arbeitseintrag = $stundenNachDatum[$datum];
-        
+function generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, &$totalHours, $berechtigung, $username, $KWoffset ) {
+    if($berechtigung === 0 && strtolower($mitarbeiter['Login']) !== strtolower($username) && $KWoffset<-1)
+    {
+        $formatierteArbeitszeit = "Berechtigung";
+        $hintergrundfarbe = "DCDCDC"; 
+
+        return "<td style='background-color: #{$hintergrundfarbe};' class='employee-cell' data-datumattribut='" . htmlspecialchars($datum) . "'>{$formatierteArbeitszeit}</td>";
+    }
+    else{
+
+        if (isset($stundenNachDatum[$datum])) {
+            $arbeitseintrag = $stundenNachDatum[$datum];
+            
         $hours = calculateHours($arbeitseintrag['VonBis1']);
         $totalHours += $hours;
         var_dump($mitarbeiter['Login']);
         $formatierteArbeitszeit = formatArbeitszeit($arbeitseintrag['Dienstart'], $arbeitseintrag['VonBis1'], $arbeitseintrag['VonBis2'], $arbeitseintrag['Kommentar']);
         
         if ($berechtigung === 0 && in_array($arbeitseintrag['Dienstart'], ["Krank", "Urlaub", "Frei"])
-         && strtolower($mitarbeiter['Login']) !== strtolower($username)
+        && strtolower($mitarbeiter['Login']) !== strtolower($username) && $KWoffset>= -1
         ) 
         {    
             $formatierteArbeitszeit = "Abw.";
             $hintergrundfarbe = "B0B0B0"; 
-        } else {
+        }
+        elseif($berechtigung === 0 && strtolower($mitarbeiter['Login']) !== strtolower($username) && $KWoffset<-1
+        ){
+            $formatierteArbeitszeit = "Berechtigung";
+            $hintergrundfarbe = "B0B0B0"; 
+        }
+        else {
             $hintergrundfarbe = $arbeitseintrag['Farbe'];
         }
-
+        
         return "<td style='background-color: #$hintergrundfarbe;' class='employee-cell' data-datumattribut='" . htmlspecialchars($datum) . "'>{$formatierteArbeitszeit}</td>";
-
+        
     }  else {
         $hours = 0;
         $formattedTime = '';
         $bgColor = '';
-
+        
         if ($i < 4) {  // Montag bis Donnerstag
             $formattedTime = (count($mo_do) === 1) ? $mo_do[0] : ($mo_do[$i] ?? '');
             $hours = calculateHours($formattedTime);
             $totalHours += $hours;
-
+            
             if ($formattedTime === "Frei") {
                 $bgColor = 'B0B0B0';
                 $formattedTime = 'Abw.';
@@ -137,7 +154,7 @@ function generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, 
             $fridayHours = calculateHours($mitarbeiter['FrVonBis']);
             $totalHours += $fridayHours;
             $formattedTime = $mitarbeiter['FrVonBis'];
-
+            
             if ($formattedTime === "Frei") {
                 $bgColor = 'B0B0B0';
                 $formattedTime = 'Abw.';
@@ -146,9 +163,10 @@ function generateTableCell($mitarbeiter, $datum, $stundenNachDatum, $mo_do, $i, 
             $bgColor = 'B0B0B0';
             $formattedTime = 'Abw.';
         }
-
+        
         return "<td style='background-color: #{$bgColor};' class='employee-cell' data-datumattribut='" . htmlspecialchars($datum) . "'>{$formattedTime}</td>";
     }
+}
 }
 
 

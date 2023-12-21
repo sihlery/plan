@@ -1,115 +1,116 @@
 body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f7f7f7;
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7f7f7;
 }
 
 #buttonContainer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    background-color: #6085eb; /* Dunkelblau */
-    padding: 20px; /* Etwas Abstand rundherum, um es optisch ansprechender zu gestalten */
-    color: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #6085eb; /* Dunkelblau */
+  padding: 20px; /* Etwas Abstand rundherum, um es optisch ansprechender zu gestalten */
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 #usernameInput {
-    max-width: 35%;
-    min-width: 100px;
+  max-width: 35%;
+  min-width: 100px;
 }
 
-
-input, button, select {
-    margin: 10px;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+input,
+button,
+select {
+  margin: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
 input {
-    flex-grow: 1;
-    padding-left: 15px;
+  flex-grow: 1;
+  padding-left: 15px;
 }
 
 button {
-    background-color: #007BFF;
-    color: white;
-    cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 select {
-    background-color: #ffffff;
-    border: 1px solid #ccc;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
 }
 
-
 #weekControlsContainer {
-    display: flex;
-    flex-direction: column; 
-    align-items: flex-start; 
-    padding: 10px 20px; 
-    background-color: #5a6d99; 
-    color: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 99px; /* Dies berücksichtigt die Höhe von #buttonContainer (angenommen, sie beträgt 60px inklusive Padding). Passen Sie diesen Wert an, wenn nötig. */
-    z-index: 999; 
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 20px;
+  background-color: #5a6d99;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 99px; /* Dies berücksichtigt die Höhe von #buttonContainer (angenommen, sie beträgt 60px inklusive Padding). Passen Sie diesen Wert an, wenn nötig. */
+  z-index: 999;
 }
 
 #lowerControls {
-    display: flex;
-    width: 85%;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  width: 85%;
+  align-items: center;
+  justify-content: space-between;
 }
 
 #weekControls {
-    display: flex;
-    gap: 5px; 
+  display: flex;
+  gap: 5px;
 }
 
 #ansichtInfo {
-    flex: 1; /* Nimm den gesamten verfügbaren Platz ein */
-    text-align: center; /* Zentriert den Text */
-    margin-left: 10px; /* Gibt etwas Platz links vom Text */
-    margin-right: 10px; /* Gibt etwas Platz rechts vom Text */
+  flex: 1; /* Nimm den gesamten verfügbaren Platz ein */
+  text-align: center; /* Zentriert den Text */
+  margin-left: 10px; /* Gibt etwas Platz links vom Text */
+  margin-right: 10px; /* Gibt etwas Platz rechts vom Text */
 }
 
-
 #tableDiv {
-    max-width: 1200px; /* Oder jede andere gewünschte Breite */
-    overflow-x: auto; /* Damit ein horizontaler Scrollbalken erscheint, wenn die Tabelle breiter als der Wrapper ist */
-    margin: 0 auto;   /* Zentriert den Wrapper horizontal */
-    padding: 20px;
+  max-width: 1200px; /* Oder jede andere gewünschte Breite */
+  overflow-x: auto; /* Damit ein horizontaler Scrollbalken erscheint, wenn die Tabelle breiter als der Wrapper ist */
+  margin: 0 auto; /* Zentriert den Wrapper horizontal */
+  padding: 20px;
 }
 
 #mitarbeiterTabelle {
-    width: 100%;
-    border-collapse: collapse;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-#mitarbeiterTabelle th, #mitarbeiterTabelle td {
-    padding: 10px;
-    border: 1px solid #e1e1e1;
+#mitarbeiterTabelle th,
+#mitarbeiterTabelle td {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #e1e1e1;
 }
 
 #mitarbeiterTabelle th {
-    background-color: #56a4f7;
-    color: white;
+  background-color: #56a4f7;
+  color: white;
 }
 
 #mitarbeiterTabelle tr td:first-child {
-    font-weight: bold;
+  font-weight: bold;
 }
